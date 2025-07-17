@@ -2,4 +2,4 @@ import './bootstrap';
 
 import '../sass/app.scss';
 
-import * as bootsrtap from 'bootsrtap';
+import * as bootstrap from 'bootstrap';
