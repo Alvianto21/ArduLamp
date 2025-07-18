@@ -1,0 +1,1 @@
+<a {{ $attributes }} class="{{ $active ? 'nav-link active text-blue-300' : 'nav-link text-gray-600' }}" aria-current="{{ $active ? 'page' : false }}">{{ $slot }}</a>
