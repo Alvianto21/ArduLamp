@@ -4,12 +4,12 @@
     </li>
     @guest
         <li class="nav-item">
-            <x-homes.navlink href="/login" :active="request()->is('/login')">Login</x-homes.navlink>
+            <x-homes.navlink href="/login" :active="request()->is('login')">Login</x-homes.navlink>
         </li>
     @endguest
     @auth
         <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <x-homes.navlink href="/dashboard" :active="request()->is('dashboard')">Dashboard</x-homes.navlink>
         </li>
     @endauth
 </ul>

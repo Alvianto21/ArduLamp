@@ -14,16 +14,27 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
+    <!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <title>Ardulamp | {{ $title ?? 'Default title' }}</title>
 </head>
 
 <body>
+    @guest
     <!-- Navbar -->
     <x-homes.navbar></x-homes.navbar>
+        
+    @endguest
 
+    @auth
+        <!-- Side Bar -->
+        <x-homes.sidebar></x-homes.sidebar>
+    @endauth
     <div class="col-lg-8 mx-auto p-4 py-md-5">
         <!-- Header -->
         <x-homes.header>{{ $title ?? 'Default title' }}</x-homes.header>
+
 
         <!-- Main Content -->
         <main>
