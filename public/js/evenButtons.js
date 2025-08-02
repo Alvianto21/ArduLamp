@@ -7,7 +7,7 @@ const oriBtn = btn.innerHTML;
 
 // Get inisial lamp status
 document.addEventListener('DOMContentLoaded', async function () {
-	console.log('Get lamp status');
+	// console.log('Get lamp status');
 	// Disable the button
 	btn.disable = true;
 	btn.innerHTML = `
@@ -29,13 +29,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 		const data = await response.json();
 		status = data.status;
 		document.querySelector('#lamp').textContent = status === 'ON' ? 'Turn OFF' : 'Turn ON';
-		console.log('Current Status', status);
+		// console.log('Current Status', status);
 
 		// Enabled the  buuton
 		btn.disable = false;
 		btn.innerHTML = oriBtn;
 	} catch (error) {
-		console.error('Error', error);
+		// console.error('Error', error);
 	} finally {
 		btn.disable = false;
 		btn.textContent = status === 'ON' ? 'Turn OFF' : 'Turn ON';

@@ -18,7 +18,7 @@ class ControlLampController extends Controller
     {
         // Read the lamp status form file
         $status = Storage::disk('local')->get('lamp_status.txt');
-        Log::info('Lamp status retrieved', ['status' => $status]);
+        // Log::info('Lamp status retrieved', ['status' => $status]);
 
         // Return the status as a JSON response and convert it to boolean
         return response()->json([
@@ -33,16 +33,16 @@ class ControlLampController extends Controller
     {
         // Validate the input
         // input most be either 'ON' or 'OFF'
-        Log::info('Changing lamp status', ['status' => $request->input('status')]);
+        // Log::info('Changing lamp status', ['status' => $request->input('status')]);
 
         $request->validate([
             'status' => 'required|in:ON,OFF'
         ]);
-        Log::info('Validation passed');
+        // Log::info('Validation passed');
 
         // Trigger the event to update the lamp status
         LampStatusUpdate::dispatch($request->input('status'));
-        Log::info('Lamp status updated by event');
+        // Log::info('Lamp status updated by event');
 
         // Get the updated data
         $update = Storage::disk('local')->get('lamp_status.txt');
