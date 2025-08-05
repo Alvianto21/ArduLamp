@@ -1,7 +1,7 @@
 /*
 	|This is example of WiFi connection code and API server.
 	|Port is your server port
-	|Change it to suit your WiFi and enter it into your nain code 
+	|Change it to suit your WiFi and enter it into your nain code in ESP-01
 */
 
 #define SSId "Your_SSID"
