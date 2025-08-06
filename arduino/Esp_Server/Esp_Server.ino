@@ -1,6 +1,14 @@
- #include <ESP8266WiFi.h>
- #include "connection.h"
- 
+// Library
+#include <ESP8266WiFi.h>
+#include "connection.h"
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+
+ // Global variable
+ static bool wait = false;
+int statusCode;
+String body;
+
 // ToDo tes koneksi internet
 void internet() {
   WiFi.mode(WIFI_STA);
@@ -21,7 +29,37 @@ void internet() {
 }
 
 // ToDo tes koneksi server, gunakan fetch atau yang lain
-// ToDo kirim data ke Arduino
+void connApi() {
+  // Setup WiFiClient and HTTPClient instance
+  WiFiClient client;
+  HTTPClient http;
+
+  // Set HTTP connection
+  http.begin(client, host, port, recource);
+
+  // Request HTTP GET
+  statusCode = http.GET();
+
+  // Print HTTP Status Code and save response body
+  Serial.println(statusCode);
+  body = http.getString();
+
+  // HTTP code will be negative on error
+  if (statusCode > 0) {
+    if (statusCode == HTTP_CODE_OK) {
+      // ToDo kirim data ke Arduino
+      Serial.println(body);
+    }
+  } else {
+    Serial.println(http.errorToString(statusCode));
+  }
+
+  // Close server connection
+  http.end();
+  body = "";
+  wait = true;
+}
+
 void setup() {
   // put your setup code here, to run once:
   // ToDo tes komunikasi
@@ -33,6 +71,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.write("Hello, from ESP \n");
-  delay(3000);
+  if (wait) {
+    delay(30000);
+    wait = false;
+  } else {
+    connApi();
+  }
 }
