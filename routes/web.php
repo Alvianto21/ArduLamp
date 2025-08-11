@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -7,9 +8,9 @@ Route::get('/', function () {
     return view('homes.index', ['title' => 'Home Page']);
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return view('gate.dashboard', ['title' => 'Dashboard Page']);
-})->middleware(['auth', 'verified', 'admin'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'admin'])->name('dashboard');
+
+Route::get('/dashboard/lamp', [DashboardController::class, 'saveStatus'])->middleware(['auth', 'verified', 'admin'])->name('dashboard.lamp');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
