@@ -8,5 +8,6 @@
     </div>
 
     <!-- FixMe gunakan form atau button link untuk proses ini dan gunakan routes helper
-    xxx osional gunakan controller untuk mengelola rute -->
+    xxx osional gunakan controller untuk mengelola rute
+    xxx posible upgrade, gunakan livewire 3 untuk fungsi baru dan service layer untuk pelaporan status -->
 </x-homes.layout>
