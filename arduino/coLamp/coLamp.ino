@@ -1,6 +1,5 @@
 // libary
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 // [x] Main goal 2 detik delay
 
 // variable declaration
@@ -9,181 +8,60 @@ String baca = "";
 
 // pins deklaration
 const int RelayPin = 8;
-const byte rxPin = 6;
-const byte txPin = 5;
 
-// setup new SofwareSerial object
-SoftwareSerial espSerial(5,6); // FixMe gunakan AltSoftSerial atau Arduino Serial (pin 0 dan 1, cabut saat upload)
+ // FixMe gunakan AltSoftSerial atau Arduino Serial (pin 0 dan 1, cabut saat upload)
 
 // ToDo ganti bagian ini agar hanya membaca pesan dari ESP dan eksekusinya
-// send command to ESP
-bool sendingCommand(const String cmd, const int timeout, String expec = "OK") {
-  espSerial.println(cmd);
-  String respon = "";
-  unsigned long times = millis();
-  while (millis() - times < timeout) {
-    while (espSerial.available()) {
-      char c = espSerial.read();
-      respon += c;
-      times = millis();
-    }
-  }
-  
-  // check response
-  if (respon.indexOf(expec) != -1) {
-    Serial.println("✓ " + cmd + " → " + expec);
-    Serial.println("Pass, continue");
-    return true;
-  } 
-  
-  if (respon.indexOf("ERROR") != -1) {
-    Serial.println("✗ " + cmd + " → ERROR");
-    Serial.println("Failed");
-    return false;
-  }
-
-  // if no response
-  Serial.println("TimeOut");
-  return false;
-}
-
-// Waiting server
-bool waiter(const char* token, unsigned long timeout) {
-  unsigned long times = millis() + timeout;
-  String buff;
-  while (millis() < times) {
-    while (espSerial.available()) {
-      buff += char(espSerial.read());
-      if (buff.indexOf(token) != -1) return true;
-    }
-  }
-  return false;
-}
-
-// TCP connection
-//bool TCPConnect() {
-////  String cmd2 = "AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(port) + "\r\n";
-//  if (!sendingCommand(cmd2, 5000)) return false;
-//  String reg = String("GET ") + rescource + " HTTP/1.1\r\n" + "Host: " + host + ":" + port + "\r\n" + "Connection: close\r\n" + "User-Agent: ESP01\r\n\r\n";
-//  if (!sendingCommand("AT+CIPSEND=" + String(reg.length()), 2000,">")) return false;
-//  espSerial.println(reg);
-//  if (!waiter("SEND OK", 5000)) return false;
-//  return true;
-//}
-
-// Read response
-void httpRead() {
-  unsigned long times = millis() + 5000;
-  String resp = "";
-  while (millis() < times) {
-    if (espSerial.available()) {
-      char c = espSerial.read();
-      resp += c;
-      times = millis() + 1000;
-    }
-  }
-  Serial.println("Response: ");
-  Serial.println(resp);
-
-  // find JSON data
-  int p = resp.indexOf("+IPD,");
-  if (p == -1) return;
-  int q = resp.indexOf(':', p);
-  if (q == 1) return;
-
-  // Trim data
-  String json = resp.substring(q + 1);
-  json.trim();
-  Serial.println(json);
-  
-  // Parsing response
-  const String key = "\"status\":\"";
-  int val = json.indexOf(key);
-  if (val == -1) return;
-  int start = val + key.length();
-  int ending = json.indexOf('"', start);
-  if (ending == -1) ending = json.length();
-  lamp = json.substring(start, ending);
-  Serial.println(lamp);
-
-  // Reset data
-  resp = "";
-}
-
-// connect to WiFi
-//void connection() {
-//  Serial.println("Connecting ....");
-//
-//  // Check basic communication
-//  if (sendingCommand("AT", 2000)) {
-//    Serial.println("Comms online");
-//  } else {
-//    Serial.println("failed to connect to ESP");
-//  }
-//
-//  // setup to station mode
-//  if (sendingCommand("AT+CWMODE=1", 2000)) {
-//    Serial.println("STA mode online");
-//  } else {
-//    Serial.println("Failed to change mode");
-//  }
-//
-//  // conecting to WiFi
-//  String cmd = "AT+CWJAP=\"" + String(SSId) + "\",\"" + String(Password) + "\"";
-//  if (sendingCommand(cmd, 10000)) {
-//    Serial.println("Connected to WiFi");
-//  } else {
-//      Serial.println("Failed to connect");
-//   }
-//
-//   // Setup connection
-//   if (espSerial.println("AT+CIPMUX=0")) {
-//    Serial.println("Connection setup");
-//   } else {
-//    Serial.println("Connection setup failed");
-//   }
-//}
-
-// Lamp main program
-//void lampControl() {
-//  // initiate TCP connection
-//  if (TCPConnect()) {
-//    httpRead();
-//    // Close TCP
-//    espSerial.println("AT+CIPCLOSE");
-//
-//    // control lamp
-//    if (lamp == "ON") {
-//      digitalWrite(RelayPin, HIGH);
-//    }
-//
-//    if (lamp == "OFF") {
-//      digitalWrite(RelayPin, LOW);
-//    }
-//  }
-//}
-
-void setup() {
-  // put your setup code here, to run once:
-  // device deklaration
-//  pinMode(rxPin, INPUT);
-//  pinMode(txPin, OUTPUT);
-  pinMode(RelayPin, OUTPUT);
-
-  // ToDo setup coms for Arduino and ESP
-  Serial.begin(115200);
-  espSerial.begin(115200); 
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-   if (espSerial.available() > 0) {
-    baca = espSerial.readStringUntil('\n');
+void reading() {
+  // Read response
+  if (Serial.available() > 0) {
+    baca = Serial.readStringUntil('\n');
 
     if (baca.length() > 0) {
       Serial.println("message got: ");
       Serial.println(baca);
-      baca = "";
     }
   }
+ 
+  // Parsing response
+  const String key = "\"status\":\"";
+  int val = baca.indexOf(key);
+  if (val == -1) return;
+  int start = val + key.length();
+  int end = baca.indexOf('"', start);
+  if (end == -1) end = baca.length();
+  lamp = baca.substring(start, end);
+  Serial.println(lamp);
+
+  // Reset data
+  baca = "";
+}
+
+// Lamp main program
+void lampControl() {
+  // Read massage from ESP
+  reading();
+
+  // Lamp control
+  if (lamp == "ON") {
+    digitalWrite(RelayPin, HIGH);
+  }
+
+  if (lamp == "OFF") {
+    digitalWrite(RelayPin, LOW);
+  }
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  // device deklaration
+  pinMode(RelayPin, OUTPUT);
+
+  // ToDo setup coms for Arduino and ESP
+  Serial.begin(9600); 
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  lampControl();
 }

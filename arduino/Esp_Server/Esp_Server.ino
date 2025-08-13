@@ -63,10 +63,11 @@ void connApi() {
 void setup() {
   // put your setup code here, to run once:
   // ToDo tes komunikasi
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // Connec to WiFi
   internet();
+  delay(500);
 }
 
 void loop() {
