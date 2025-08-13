@@ -73,7 +73,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (wait) {
-    delay(30000);
+    delay(1000);
     wait = false;
   } else {
     connApi();
