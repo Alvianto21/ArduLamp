@@ -25,7 +25,7 @@ class PublishLampStatus
     public function handle(LampStatusUpdate $event): void
     {
         // Set new status and convert it to '1' for ON or '0' for OFF
-        $newStatus = $event->status === 'ON' ? '1' : '0';
+        $newStatus = $event->status;
 
         // Setup MQTT connection
         $host = config('mqtt-client.connections.default.host');
@@ -39,25 +39,25 @@ class PublishLampStatus
         // Open connection
         try {
             $mqtt->connect($idCard, true);
-            Log::info("MQTT connection established", [
-                'host' => $host,
-                'port' => $port,
-                'cliebt_id' => $client_id
-            ]);
+            // Log::info("MQTT connection established", [
+            //     'host' => $host,
+            //     'port' => $port,
+            //     'cliebt_id' => $client_id
+            // ]);
 
             // Publish the message
             $mqtt->publish('lamp/status', $newStatus);
-            Log::info("data sending", ['data' => $newStatus]);
+            // Log::info("data sending", ['data' => $newStatus]);
 
             // close the MQTT connection
             $mqtt->disconnect();
         } catch (\Exception $e) {
-            Log::error("MQTT connection failed", [
-                'error' => $e->getMessage(),
-                'host' => $host,
-                'port' => $port,
-                'cliebt_id' => $client_id
-            ]);
+            // Log::error("MQTT connection failed", [
+            //     'error' => $e->getMessage(),
+            //     'host' => $host,
+            //     'port' => $port,
+            //     'cliebt_id' => $client_id
+            // ]);
         }
     }
 }

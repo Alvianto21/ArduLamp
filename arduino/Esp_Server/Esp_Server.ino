@@ -1,7 +1,7 @@
 // Library
 #include <ESP8266WiFi.h>
 #include "connection.h"
-#include <ESP8266HTTPClient.h>
+#include <PubSubClient.h>
 #include <WiFiClient.h>
 
  // Global variable
@@ -29,35 +29,35 @@ void internet() {
 }
 
 // ToDo tes koneksi server, gunakan fetch atau yang lain
-void connApi() {
-  // Setup WiFiClient and HTTPClient instance
-  WiFiClient client;
-  HTTPClient http;
+// Define MQTT object
+WiFiClient EspClient;
+PubSubClient client(EspClient);
 
-  // Set HTTP connection
-  http.begin(client, host, port, recource);
+// read MQTT message
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Recive message [");
+  Serial.print(topic);
+  Serial.print("] ");
 
-  // Request HTTP GET
-  statusCode = http.GET();
-
-  // Print HTTP Status Code and save response body
-  Serial.println(statusCode);
-  body = http.getString();
-
-  // HTTP code will be negative on error
-  if (statusCode > 0) {
-    if (statusCode == HTTP_CODE_OK) {
-      // ToDo kirim data ke Arduino
-      Serial.println(body);
-    }
-  } else {
-    Serial.println(http.errorToString(statusCode));
+  // Print all message
+  for (int i = 0; i < length; i++) {
+    body += (char)payload[i];
   }
-
-  // Close server connection
-  http.end();
+  Serial.println(body);
   body = "";
-  wait = true;
+}
+void ReconnApi() {
+  // Loop until reconnect
+  while (!client.connected()) {
+    Serial.println("Attempt reconnect");
+    if (client.connect(client_id)) {
+      // resubscribe topic
+      client.subscribe("lamp/status");
+    } else {
+      Serial.println("Reconnect failed, reattempt in 5 seconds");
+      delay(5000);
+    }
+  }
 }
 
 void setup() {
@@ -68,14 +68,21 @@ void setup() {
   // Connec to WiFi
   internet();
   delay(500);
+
+  // Connect to MQTT server
+  client.setServer(host, port);
+  client.setCallback(callback);
+
+  // ToDo gambungkan dengan HTTP 
+  if (client.connect(client_id, user, pass)) {
+    client.subscribe("lamp/status");
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (wait) {
-    delay(1000);
-    wait = false;
-  } else {
-    connApi();
+  if (!client.connected()) {
+    ReconnApi();
   }
+  client.loop();
 }

@@ -7,5 +7,7 @@
 #define SSId "Your_SSID"
 #define Password "Your_Password"
 const char* host = "Your_API_server";
-const char* rescource = "Your_API_route";
-const int port = 8080;
+const char* user = "Your_MQTT_username";
+const char* pass = "Your_MQTT_password";
+const char* client_id = "Your_client_id";
+const int port = 1883;

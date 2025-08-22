@@ -18,20 +18,37 @@ void reading() {
     baca = Serial.readStringUntil('\n');
 
     if (baca.length() > 0) {
-      Serial.println("message got: ");
+      Serial.print("message got: ");
       Serial.println(baca);
     }
   }
  
   // Parsing response
-  const String key = "\"status\":\"";
+  const String key = "[lamp/status]";
   int val = baca.indexOf(key);
   if (val == -1) return;
   int start = val + key.length();
   int end = baca.indexOf('"', start);
   if (end == -1) end = baca.length();
   lamp = baca.substring(start, end);
+
+  // Trim data
+  lamp.trim();
+
+  // Print data
+  Serial.print("Lamp: ");
   Serial.println(lamp);
+
+  // check data
+  Serial.print("data length= ");
+  Serial.println(lamp.length());
+
+  // Print all data
+  for (int i = 0; i < lamp.length(); i++) {
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println((int)lamp[i]);
+  }
 
   // Reset data
   baca = "";
@@ -43,11 +60,11 @@ void lampControl() {
   reading();
 
   // Lamp control
-  if (lamp == "ON") {
+  if (lamp.equals("ON")) {
     digitalWrite(RelayPin, HIGH);
   }
 
-  if (lamp == "OFF") {
+  if (lamp.equals("OFF")) {
     digitalWrite(RelayPin, LOW);
   }
 }
