@@ -6,16 +6,20 @@ I build this project to apply laravel 11 API.
 ### arduino layout
 You can see my arduino layout in following image
 
-<img width="989" height="1507" alt="Arduino_Laravel_bb" src="https://github.com/user-attachments/assets/a4c55a75-0cd4-4b3b-b15b-2a9c110285f9" />
+<img width="989" height="1507" alt="Arduino_Laravel_bb" src="https://github.com/user-attachments/assets/e9571a46-a8ee-4135-a3b4-6d40c905426f" />
+
+
+
 
 ## Main Feature
 - Authentication
-- Lamp control form web
+- Real time lamp control form web
 
 ## Required
 - Laravel 11
 - PHP 83.13
 - Bootstrap 5
+- MQTT Broker
 
 ## Contribute
 Alvianto21
