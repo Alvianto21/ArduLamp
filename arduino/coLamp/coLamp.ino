@@ -24,34 +24,58 @@ void reading() {
   }
  
   // Parsing response
-  const String key = "[lamp/status]";
-  int val = baca.indexOf(key);
-  if (val == -1) return;
-  int start = val + key.length();
-  int end = baca.indexOf('"', start);
-  if (end == -1) end = baca.length();
-  lamp = baca.substring(start, end);
+  const String key1 = "[lamp/status]";
+  const String key2 = "\"status\":\"";
+  int val1 = baca.indexOf(key1);
+  int val2 = baca.indexOf(key2);
+  
+  if (val1 != -1) {
+    int start = val1 + key1.length();
+    int end = baca.indexOf('"', start);
+    if (end == -1) end = baca.length();
+    lamp = baca.substring(start, end);
 
-  // Trim data
-  lamp.trim();
+    // Trim data
+    lamp.trim();
 
-  // Print data
-  Serial.print("Lamp: ");
-  Serial.println(lamp);
+    // Print data
+    Serial.print("Lamp: ");
+    Serial.println(lamp);
 
-  // check data
-  Serial.print("data length= ");
-  Serial.println(lamp.length());
+    // check data
+    Serial.print("data length= ");
+    Serial.println(lamp.length());
 
-  // Print all data
-  for (int i = 0; i < lamp.length(); i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println((int)lamp[i]);
+    // Print all data
+    for (int i = 0; i < lamp.length(); i++) {
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.println((int)lamp[i]);
+    }
+
+    // Reset data
+    baca = "";
+    return;
+  }
+
+  if (val2 != -1) {
+    int start = val2 + key2.length();
+    int end = baca.indexOf('""', start);
+    if (end == -1) end = baca.length();
+    lamp = baca.substring(start, end);
+
+    // Print data
+    Serial.print("Lamp: ");
+    Serial.println(lamp);
+
+    // Reset data
+    baca = "";
+    return;
   }
 
   // Reset data
   baca = "";
+  return;
 }
 
 // Lamp main program
@@ -75,7 +99,7 @@ void setup() {
   pinMode(RelayPin, OUTPUT);
 
   // ToDo setup coms for Arduino and ESP
-  Serial.begin(9600); 
+  Serial.begin(9600);
 }
 
 void loop() {

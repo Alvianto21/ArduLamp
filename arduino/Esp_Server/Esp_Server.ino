@@ -3,9 +3,9 @@
 #include "connection.h"
 #include <PubSubClient.h>
 #include <WiFiClient.h>
+#include <ESP8266HTTPClient.h>
 
  // Global variable
- static bool wait = false;
 int statusCode;
 String body;
 
@@ -29,9 +29,38 @@ void internet() {
 }
 
 // ToDo tes koneksi server, gunakan fetch atau yang lain
-// Define MQTT object
+// Define WiFiClient, MQTT, and HTTPClient object
 WiFiClient EspClient;
 PubSubClient client(EspClient);
+HTTPClient http;
+
+// Get initial data
+boolean initialData() {
+  // Setup HTTP GET
+  http.begin(EspClient, api_host, api_port, api_route);
+
+  // Request HTTP GET
+  statusCode = http.GET();
+
+  // Print response
+  Serial.println(statusCode);
+  body = http.getString();
+
+  if (statusCode > 0) {
+    if(statusCode == HTTP_CODE_OK) {
+      Serial.println(body);
+    }
+
+    // Close server connection and clear data
+    http.end();
+    return true;
+  }
+
+  // Close server connection and clear data
+  http.end();
+  body = "";
+  return false;
+}
 
 // read MQTT message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -69,6 +98,10 @@ void setup() {
   internet();
   delay(500);
 
+  while (!initialData()) {
+    delay(5000);
+  }
+
   // Connect to MQTT server
   client.setServer(host, port);
   client.setCallback(callback);
@@ -81,6 +114,12 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  // Send inisial data
+  if (body.length() != 0) {
+    Serial.println(body);
+    body = "";
+  }
+  
   if (!client.connected()) {
     ReconnApi();
   }
