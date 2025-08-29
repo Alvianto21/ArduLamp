@@ -9,6 +9,7 @@
 // Global variable
 int statusCode;
 String body;
+const int relayPin = 2;
 
 // ToDo tes koneksi internet
 void internet() {
@@ -95,6 +96,9 @@ void setup() {
   // ToDo tes komunikasi
   Serial.begin(9600);
 
+  // Define I/O
+  pinMode(relayPin, OUTPUT);
+
   // Connec to WiFi
   internet();
   delay(500);
@@ -115,14 +119,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  // Send inisial data
-  if (body.length() != 0) {
-    Serial.println(body);
-    body = "";
-  }
-  
-  if (!client.connected()) {
-    ReconnApi();
-  }
-  client.loop();
+  digitalWrite(relayPin, HIGH);
+  delay(5000);
+  digitalWrite(relayPin, LOW);
 }
