@@ -5,7 +5,8 @@
 #include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
 
- // Global variable
+// ToDo jadikan ESP sebagai main program
+// Global variable
 int statusCode;
 String body;
 
